@@ -480,7 +480,7 @@ class Waris {
             currentBalance / this.ahliWaris[Object.keys(this.ashobah)[0]]
         };
       } else if (Object.keys(this.ashobah).length > 1) {
-        ashobahDivident = 0;
+        let ashobahDivident = 0;
         for (key in this.ashobah) {
           if (this.male.indexOf(key) >= 0) {
             ashobahDivident += 2 * this.ahliWaris[key];
