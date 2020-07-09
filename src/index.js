@@ -367,6 +367,7 @@ class Waris {
           portion: '1/4',
           from: 'ashabul furudh',
           value: currentBalance / 4,
+          person: this.ahliWaris['wife'],
           valuePerPerson: currentBalance / 4 / this.ahliWaris['wife']
         };
 
@@ -376,6 +377,7 @@ class Waris {
           portion: '1/3 residual',
           from: 'ashabul furudh',
           value: currentBalance / 3,
+          person: this.ahliWaris['mother'],
           valuePerPerson: currentBalance / 3
         };
 
@@ -385,6 +387,7 @@ class Waris {
           portion: '2/3 residual',
           from: 'ashobah',
           value: currentBalance,
+          person: this.ahliWaris['father'],
           valuePerPerson: currentBalance
         };
       } else if (this.has('husband')) {
@@ -392,6 +395,7 @@ class Waris {
           portion: '1/2',
           from: 'ashabul furudh',
           value: currentBalance / 2,
+          person: this.ahliWaris['husband'],
           valuePerPerson: currentBalance / 2
         };
         currentBalance -= this.portion['husband'].value;
@@ -400,6 +404,7 @@ class Waris {
           portion: '1/3 residual',
           from: 'ashabul furudh',
           value: currentBalance / 3,
+          person: this.ahliWaris['mother'],
           valuePerPerson: currentBalance / 3
         };
 
@@ -409,6 +414,7 @@ class Waris {
           portion: '1/3 residual',
           from: 'ashabul furudh',
           value: currentBalance / 3,
+          person: this.ahliWaris['father'],
           valuePerPerson: currentBalance / 3
         };
       }
@@ -440,6 +446,7 @@ class Waris {
                 (this.ahliWaris['sisterSameMother'] +
                   this.ahliWaris['brotherSameMother'])) *
               this.ahliWaris['sisterSameMother'],
+            person: this.ahliWaris['sisterSameMother'],
             valuePerPerson:
               value /
               (this.ahliWaris['sisterSameMother'] +
@@ -454,6 +461,7 @@ class Waris {
                 (this.ahliWaris['sisterSameMother'] +
                   this.ahliWaris['brotherSameMother'])) *
               this.ahliWaris['brotherSameMother'],
+            person: this.ahliWaris['brotherSameMother'],
             valuePerPerson:
               value /
               (this.ahliWaris['sisterSameMother'] +
@@ -464,6 +472,7 @@ class Waris {
             portion: this.ashabulFurud[key],
             from: 'ashabul furudh',
             value: value,
+            person: this.ahliWaris[key],
             valuePerPerson: value / this.ahliWaris[key]
           };
         }
@@ -476,12 +485,13 @@ class Waris {
           portion: this.asalmasalah - this.divident + '/' + this.asalmasalah,
           from: 'ashobah ' + this.ashobah[Object.keys(this.ashobah)[0]],
           value: currentBalance,
+          person: this.ahliWaris[Object.keys(this.ashobah)[0]],
           valuePerPerson:
             currentBalance / this.ahliWaris[Object.keys(this.ashobah)[0]]
         };
       } else if (Object.keys(this.ashobah).length > 1) {
         let ashobahDivident = 0;
-        for (key in this.ashobah) {
+        for (let key in this.ashobah) {
           if (this.male.indexOf(key) >= 0) {
             ashobahDivident += 2 * this.ahliWaris[key];
           }
@@ -490,7 +500,7 @@ class Waris {
           }
         }
 
-        for (key in this.ashobah) {
+        for (let key in this.ashobah) {
           if (this.male.indexOf(key) >= 0) {
             this.portion[key] = {
               portion:
@@ -500,6 +510,7 @@ class Waris {
               from: 'ashobah ' + this.ashobah[key],
               value:
                 ((2 * this.ahliWaris[key]) / ashobahDivident) * currentBalance,
+              person: this.ahliWaris[key],
               valuePerPerson:
                 (((2 * this.ahliWaris[key]) / ashobahDivident) *
                   currentBalance) /
@@ -515,6 +526,7 @@ class Waris {
                 this.asalmasalah * ashobahDivident,
               from: 'ashobah ' + this.ashobah[key],
               value: (this.ahliWaris[key] / ashobahDivident) * currentBalance,
+              person: this.ahliWaris[key],
               valuePerPerson:
                 ((this.ahliWaris[key] / ashobahDivident) * currentBalance) /
                 this.ahliWaris[key]
@@ -523,9 +535,9 @@ class Waris {
         }
       }
     } else if (this.calculation == 'aul') {
-      for (key in this.ashabulFurud) {
-        value = 0;
-        divident = 0;
+      for (let key in this.ashabulFurud) {
+        let value = 0;
+        let divident = 0;
         if (this.ashabulFurud[key] === '1/2') {
           divident = (1 / 2) * this.asalmasalah;
         } else if (this.ashabulFurud[key] === '1/4') {
@@ -558,6 +570,7 @@ class Waris {
                 (this.ahliWaris['sisterSameMother'] +
                   this.ahliWaris['brotherSameMother'])) *
               this.ahliWaris['sisterSameMother'],
+            person: this.ahliWaris['sisterSameMother'],
             valuePerPerson:
               value /
               (this.ahliWaris['sisterSameMother'] +
@@ -577,6 +590,7 @@ class Waris {
                 (this.ahliWaris['sisterSameMother'] +
                   this.ahliWaris['brotherSameMother'])) *
               this.ahliWaris['brotherSameMother'],
+            person: this.ahliWaris['brotherSameMother'],
             valuePerPerson:
               value /
               (this.ahliWaris['sisterSameMother'] +
@@ -587,6 +601,7 @@ class Waris {
             portion: divident + '/' + this.divident,
             from: 'ashabul furudh',
             value: value,
+            person: this.ahliWaris[key],
             valuePerPerson: value / this.ahliWaris[key]
           };
         }
@@ -594,7 +609,7 @@ class Waris {
     } else if (this.calculation == 'radd') {
       const restAshabulFurudh = JSON.parse(JSON.stringify(this.ashabulFurud));
       if (this.has('husband')) {
-        value =
+        let value =
           this.ashabulFurud['husband'] === '1/2'
             ? (1 / 2) * this.balance
             : (1 / 4) * this.balance;
@@ -603,6 +618,7 @@ class Waris {
           portion: this.ashabulFurud['husband'],
           from: 'ashabul furudh',
           value: value,
+          person: this.ahliWaris['husband'],
           valuePerPerson: value / this.ahliWaris['husband']
         };
         currentBalance -= value;
@@ -610,7 +626,7 @@ class Waris {
       }
 
       if (this.has('wife')) {
-        value =
+        let value =
           this.ashabulFurud['wife'] === '1/4'
             ? (1 / 4) * this.balance
             : (1 / 8) * this.balance;
@@ -619,6 +635,7 @@ class Waris {
           portion: this.ashabulFurud['wife'],
           from: 'ashabul furudh',
           value: value,
+          person: this.ahliWaris['wife'],
           valuePerPerson: value / this.ahliWaris['wife']
         };
         currentBalance -= value;
@@ -627,9 +644,9 @@ class Waris {
 
       let calculate = this.calculateAsalMasalah(restAshabulFurudh);
 
-      for (key in restAshabulFurudh) {
-        value = 0;
-        divident = 0;
+      for (let key in restAshabulFurudh) {
+        let value = 0;
+        let divident = 0;
         if (restAshabulFurudh[key] === '1/2') {
           divident = (1 / 2) * calculate.asalmasalah;
         } else if (restAshabulFurudh[key] === '1/4') {
@@ -676,6 +693,7 @@ class Waris {
                 (this.ahliWaris['sisterSameMother'] +
                   this.ahliWaris['brotherSameMother'])) *
               this.ahliWaris['sisterSameMother'],
+            person: this.ahliWaris['sisterSameMother'],
             valuePerPerson:
               value /
               (this.ahliWaris['sisterSameMother'] +
@@ -697,6 +715,7 @@ class Waris {
                 (this.ahliWaris['sisterSameMother'] +
                   this.ahliWaris['brotherSameMother'])) *
               this.ahliWaris['brotherSameMother'],
+            person: this.ahliWaris['brotherSameMother'],
             valuePerPerson:
               value /
               (this.ahliWaris['sisterSameMother'] +
@@ -711,6 +730,7 @@ class Waris {
               (this.has('wife') ? ' sisa' : ''),
             from: 'ashabul furudh',
             value: value,
+            person: this.ahliWaris[key],
             valuePerPerson: value / this.ahliWaris[key]
           };
         }
@@ -732,7 +752,17 @@ class Waris {
     this.calculatePortion();
 
     if (Object.keys(this.errorMessage).length > 0) return this.errorMessage;
-    else return { portion: this.portion, calculation: this.calculation };
+    else {
+      let result = {
+        asset: this.asset,
+        ahliWaris: this.ahliWaris,
+        portion: this.portion,
+        calculation: this.calculation,
+        asalmasalah: this.asalmasalah
+      };
+
+      return result;
+    }
   }
 }
 
