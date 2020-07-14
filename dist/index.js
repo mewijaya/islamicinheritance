@@ -343,11 +343,11 @@ var Waris = function () {
           currentBalance -= this.portion['mother'].value;
 
           this.portion['father'] = {
-            portion: '1/3 residual',
+            portion: '2/3 residual',
             from: 'ashabul furudh',
-            value: currentBalance / 3,
+            value: currentBalance,
             person: this.ahliWaris['father'],
-            valuePerPerson: currentBalance / 3
+            valuePerPerson: currentBalance
           };
         }
       } else if (this.calculation == '-') {
@@ -402,9 +402,9 @@ var Waris = function () {
           this.portion[Object.keys(this.ashobah)[0]] = {
             portion: this.asalmasalah - this.divident + '/' + this.asalmasalah,
             from: 'ashobah ' + this.ashobah[Object.keys(this.ashobah)[0]],
-            value: currentBalance,
+            value: this.asalmasalah - this.divident == 0 ? 0 : currentBalance,
             person: this.ahliWaris[Object.keys(this.ashobah)[0]],
-            valuePerPerson: currentBalance / this.ahliWaris[Object.keys(this.ashobah)[0]]
+            valuePerPerson: this.asalmasalah - this.divident == 0 ? 0 : currentBalance / this.ahliWaris[Object.keys(this.ashobah)[0]]
           };
         } else if (Object.keys(this.ashobah).length > 1) {
           var ashobahDivident = 0;
@@ -422,9 +422,9 @@ var Waris = function () {
               this.portion[_key3] = {
                 portion: (this.asalmasalah - this.divident) * (2 * this.ahliWaris[_key3]) + '/' + this.asalmasalah * ashobahDivident,
                 from: 'ashobah ' + this.ashobah[_key3],
-                value: 2 * this.ahliWaris[_key3] / ashobahDivident * currentBalance,
+                value: this.asalmasalah - this.divident == 0 ? 0 : 2 * this.ahliWaris[_key3] / ashobahDivident * currentBalance,
                 person: this.ahliWaris[_key3],
-                valuePerPerson: 2 * this.ahliWaris[_key3] / ashobahDivident * currentBalance / this.ahliWaris[_key3]
+                valuePerPerson: this.asalmasalah - this.divident == 0 ? 0 : 2 * this.ahliWaris[_key3] / ashobahDivident * currentBalance / this.ahliWaris[_key3]
               };
             }
 
@@ -432,9 +432,9 @@ var Waris = function () {
               this.portion[_key3] = {
                 portion: (this.asalmasalah - this.divident) * this.ahliWaris[_key3] + '/' + this.asalmasalah * ashobahDivident,
                 from: 'ashobah ' + this.ashobah[_key3],
-                value: this.ahliWaris[_key3] / ashobahDivident * currentBalance,
+                value: this.asalmasalah - this.divident == 0 ? 0 : this.ahliWaris[_key3] / ashobahDivident * currentBalance,
                 person: this.ahliWaris[_key3],
-                valuePerPerson: this.ahliWaris[_key3] / ashobahDivident * currentBalance / this.ahliWaris[_key3]
+                valuePerPerson: this.asalmasalah - this.divident == 0 ? 0 : this.ahliWaris[_key3] / ashobahDivident * currentBalance / this.ahliWaris[_key3]
               };
             }
           }
@@ -569,8 +569,6 @@ var Waris = function () {
               valuePerPerson: _value4 / this.ahliWaris[_key5]
             };
           }
-
-          currentBalance -= _value4;
         }
       }
     }
