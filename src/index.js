@@ -481,16 +481,30 @@ class Waris {
       }
 
       if (Object.keys(this.ashobah).length == 1) {
-        this.portion[Object.keys(this.ashobah)[0]] = {
-          portion: this.asalmasalah - this.divident + '/' + this.asalmasalah,
-          from: 'ashobah ' + this.ashobah[Object.keys(this.ashobah)[0]],
-          value: this.asalmasalah - this.divident == 0 ? 0 : currentBalance,
-          person: this.ahliWaris[Object.keys(this.ashobah)[0]],
-          valuePerPerson:
-            this.asalmasalah - this.divident == 0
-              ? 0
-              : currentBalance / this.ahliWaris[Object.keys(this.ashobah)[0]]
-        };
+        if (Object.keys(this.ashobah)[0] in this.portion) {
+          this.portion[Object.keys(this.ashobah)[0]].portion +=
+            ' + ' + (this.asalmasalah - this.divident) + '/' + this.asalmasalah;
+          this.portion[Object.keys(this.ashobah)[0]].from +=
+            ' + ' + 'ashobah ' + this.ashobah[Object.keys(this.ashobah)[0]];
+          this.portion[Object.keys(this.ashobah)[0]].value +=
+            this.asalmasalah - this.divident == 0 ? 0 : currentBalance;
+          this.portion[Object.keys(this.ashobah)[0]].valuePerPerson +=
+            currentBalance / this.ahliWaris[Object.keys(this.ashobah)[0]];
+        } else {
+          this.portion[Object.keys(this.ashobah)[0]] = {
+            portion:
+              Object.keys(this.ashabulFurud).length > 0
+                ? this.asalmasalah - this.divident + '/' + this.asalmasalah
+                : 1,
+            from: 'ashobah ' + this.ashobah[Object.keys(this.ashobah)[0]],
+            value: this.asalmasalah - this.divident == 0 ? 0 : currentBalance,
+            person: this.ahliWaris[Object.keys(this.ashobah)[0]],
+            valuePerPerson:
+              this.asalmasalah - this.divident == 0
+                ? 0
+                : currentBalance / this.ahliWaris[Object.keys(this.ashobah)[0]]
+          };
+        }
       } else if (Object.keys(this.ashobah).length > 1) {
         let ashobahDivident = 0;
         for (let key in this.ashobah) {
@@ -504,45 +518,85 @@ class Waris {
 
         for (let key in this.ashobah) {
           if (this.male.indexOf(key) >= 0) {
-            this.portion[key] = {
-              portion:
+            if (key in this.portion) {
+              this.portion[key].portion +=
+                ' + ' +
                 (this.asalmasalah - this.divident) * (2 * this.ahliWaris[key]) +
                 '/' +
-                this.asalmasalah * ashobahDivident,
-              from: 'ashobah ' + this.ashobah[key],
-              value:
+                this.asalmasalah * ashobahDivident;
+              this.portion[key].from += ' + ashobah ' + this.ashobah[key];
+              this.portion[key].value +=
                 this.asalmasalah - this.divident == 0
                   ? 0
                   : ((2 * this.ahliWaris[key]) / ashobahDivident) *
-                    currentBalance,
-              person: this.ahliWaris[key],
-              valuePerPerson:
+                    currentBalance;
+              this.portion[key].valuePerPerson +=
                 this.asalmasalah - this.divident == 0
                   ? 0
                   : (((2 * this.ahliWaris[key]) / ashobahDivident) *
                       currentBalance) /
-                    this.ahliWaris[key]
-            };
+                    this.ahliWaris[key];
+            } else {
+              this.portion[key] = {
+                portion:
+                  (this.asalmasalah - this.divident) *
+                    (2 * this.ahliWaris[key]) +
+                  '/' +
+                  this.asalmasalah * ashobahDivident,
+                from: 'ashobah ' + this.ashobah[key],
+                value:
+                  this.asalmasalah - this.divident == 0
+                    ? 0
+                    : ((2 * this.ahliWaris[key]) / ashobahDivident) *
+                      currentBalance,
+                person: this.ahliWaris[key],
+                valuePerPerson:
+                  this.asalmasalah - this.divident == 0
+                    ? 0
+                    : (((2 * this.ahliWaris[key]) / ashobahDivident) *
+                        currentBalance) /
+                      this.ahliWaris[key]
+              };
+            }
           }
 
           if (this.female.indexOf(key) >= 0) {
-            this.portion[key] = {
-              portion:
+            if (key in this.portion) {
+              this.portion[key].portion +=
+                ' + ' +
                 (this.asalmasalah - this.divident) * this.ahliWaris[key] +
                 '/' +
-                this.asalmasalah * ashobahDivident,
-              from: 'ashobah ' + this.ashobah[key],
-              value:
+                this.asalmasalah * ashobahDivident;
+              this.portion[key].from += ' + ashobah ' + this.ashobah[key];
+              this.portion[key].value +=
                 this.asalmasalah - this.divident == 0
                   ? 0
-                  : (this.ahliWaris[key] / ashobahDivident) * currentBalance,
-              person: this.ahliWaris[key],
-              valuePerPerson:
+                  : (this.ahliWaris[key] / ashobahDivident) * currentBalance;
+              this.portion[key].valuePerPerson +=
                 this.asalmasalah - this.divident == 0
                   ? 0
                   : ((this.ahliWaris[key] / ashobahDivident) * currentBalance) /
-                    this.ahliWaris[key]
-            };
+                    this.ahliWaris[key];
+            } else {
+              this.portion[key] = {
+                portion:
+                  (this.asalmasalah - this.divident) * this.ahliWaris[key] +
+                  '/' +
+                  this.asalmasalah * ashobahDivident,
+                from: 'ashobah ' + this.ashobah[key],
+                value:
+                  this.asalmasalah - this.divident == 0
+                    ? 0
+                    : (this.ahliWaris[key] / ashobahDivident) * currentBalance,
+                person: this.ahliWaris[key],
+                valuePerPerson:
+                  this.asalmasalah - this.divident == 0
+                    ? 0
+                    : ((this.ahliWaris[key] / ashobahDivident) *
+                        currentBalance) /
+                      this.ahliWaris[key]
+              };
+            }
           }
         }
       }
@@ -655,7 +709,7 @@ class Waris {
       }
 
       let calculate = this.calculateAsalMasalah(restAshabulFurudh);
-
+      let endingBalance = currentBalance;
       for (let key in restAshabulFurudh) {
         let value = 0;
         let divident = 0;
@@ -676,7 +730,7 @@ class Waris {
         }
 
         value = (divident / calculate.divident) * currentBalance;
-
+        endingBalance -= value;
         if (key === 'siblingSameMother') {
           let gcdSister = findGCD(
             this.ahliWaris['sisterSameMother'] +
@@ -746,6 +800,16 @@ class Waris {
             valuePerPerson: value / this.ahliWaris[key]
           };
         }
+      }
+
+      if (endingBalance > 0) {
+        this.portion['baitulmaal'] = {
+          portion: '-',
+          from: 'sisa',
+          value: endingBalance,
+          person: 0,
+          valuePerPerson: 0
+        };
       }
     }
   }
