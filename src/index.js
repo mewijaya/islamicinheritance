@@ -157,7 +157,7 @@ class Waris {
 
           if (this.ahliWaris.daughterOfSon >= 2)
             this.ashabulFurud['daughterOfSon'] = '2/3';
-        } else if (this.has('daughter') && this.daughter == 1) {
+        } else if (this.has('daughter') && this.ahliWaris.daughter == 1) {
           if (this.ahliWaris.daughterOfSon >= 1)
             this.ashabulFurud['daughterOfSon'] = '1/6';
         }
@@ -212,12 +212,12 @@ class Waris {
     if (this.has('sisterSameFather')) {
       if (!this.hasAncestry() && !this.hasPosterity()) {
         if (!this.has('brother') && !this.has('sister')) {
-          if (this.sisterSameFather == 1) {
+          if (this.ahliWaris.sisterSameFather == 1) {
             this.ashabulFurud['sisterSameFather'] = '1/2';
-          } else if (this.sisterSameFather > 1) {
+          } else if (this.ahliWaris.sisterSameFather > 1) {
             this.ashabulFurud['sisterSameFather'] = '2/3';
           }
-        } else if (!this.has('brother') && this.sister == 1) {
+        } else if (!this.has('brother') && this.ahliWaris.sister == 1) {
           if (!this.has('brotherSameFather')) {
             this.ashabulFurud['sisterSameFather'] = '1/6';
           }
@@ -832,7 +832,7 @@ class Waris {
         ahliWaris: this.ahliWaris,
         portion: this.portion,
         calculation: this.calculation,
-        asalmasalah: this.asalmasalah
+        asalmasalah: this.asalmasalah > 0 ? this.asalmasalah : 0
       };
 
       return result;
