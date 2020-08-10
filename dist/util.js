@@ -9,7 +9,7 @@ var findGCD = exports.findGCD = function findGCD(x, y) {
 };
 
 var findLCM = exports.findLCM = function findLCM(data) {
-  if (!Array.isArray(data) && data.length < 2) return;
+  if (!Array.isArray(data) || data.length < 1) return 0;
 
   var result = data[0];
 

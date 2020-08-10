@@ -5,7 +5,7 @@ export const findGCD = (x, y) => {
 };
 
 export const findLCM = (data) => {
-  if (!Array.isArray(data) && data.length < 2) return;
+  if (!Array.isArray(data) || data.length < 1) return 0;
 
   let result = data[0];
 
