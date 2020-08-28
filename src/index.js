@@ -612,6 +612,8 @@ class Waris {
         if (key === 'siblingSameMother') {
           this.portion['sisterSameMother'] = {
             portion:
+              this.ashabulFurud['sisterSameMother'] +
+              ' diaulkan menjadi ' +
               divident * this.ahliWaris['sisterSameMother'] +
               '/' +
               this.divident *
@@ -632,6 +634,8 @@ class Waris {
 
           this.portion['brotherSameMother'] = {
             portion:
+              this.ashabulFurud['brotherSameMother'] +
+              ' diaulkan menjadi ' +
               divident * this.ahliWaris['brotherSameMother'] +
               '/' +
               this.divident *
@@ -651,7 +655,12 @@ class Waris {
           };
         } else {
           this.portion[key] = {
-            portion: divident + '/' + this.divident,
+            portion:
+              this.ashabulFurud[key] +
+              ' diaulkan menjadi ' +
+              divident +
+              '/' +
+              this.divident,
             from: 'ashabul furudh',
             value: value,
             person: this.ahliWaris[key],
@@ -733,6 +742,8 @@ class Waris {
 
           this.portion['sisterSameMother'] = {
             portion:
+              this.ashabulFurud['sisterSameMother'] +
+              ' diraddkan menjadi ' +
               (divident * this.ahliWaris['sisterSameMother']) / gcdSister +
               '/' +
               calculate.divident *
@@ -755,6 +766,8 @@ class Waris {
 
           this.portion['brotherSameMother'] = {
             portion:
+              this.ashabulFurud['brotherSameMother'] +
+              ' diraddkan menjadi ' +
               (divident * this.ahliWaris['brotherSameMother']) / gcdBrother +
               '/' +
               calculate.divident *
@@ -777,6 +790,8 @@ class Waris {
         } else {
           this.portion[key] = {
             portion:
+              this.ashabulFurud[key] +
+              ' diraddkan menjadi ' +
               divident +
               '/' +
               calculate.divident +
@@ -790,13 +805,25 @@ class Waris {
       }
 
       if (endingBalance > 0) {
-        this.portion['baitulmaal'] = {
-          portion: '-',
-          from: 'sisa',
-          value: endingBalance,
-          person: 0,
-          valuePerPerson: 0
-        };
+        if (Object.keys(this.ahliWaris).length === 1) {
+          let key = Object.keys(this.ahliWaris)[0];
+          this.portion[key].from += ' + sisa';
+          this.portion[key].value += ' + ' + endingBalance;
+          this.portion[key].valuePerPerson +=
+            ' + ' + endingBalance / this.ahliWaris[key];
+          this.portion[key].note =
+            'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada baitulmaal';
+        } else {
+          this.portion['baitulmaal'] = {
+            portion: '-',
+            from: 'sisa',
+            value: endingBalance,
+            person: 0,
+            valuePerPerson: 0,
+            note:
+              'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada kerabat'
+          };
+        }
       }
     }
   }
@@ -821,6 +848,17 @@ class Waris {
         calculation: this.calculation,
         asalmasalah: this.asalmasalah > 0 ? this.asalmasalah : 0
       };
+
+      if (
+        this.has('fatherOfFather') &&
+        (this.has('brother') ||
+          this.has('brotherSameFather') ||
+          this.has('sister') ||
+          this.has('sisterSameFather'))
+      ) {
+        this.portion['fatherOfFather']['note'] =
+          'ada pendapat lain yang menyatakan bahwa saudara mendapat bagian';
+      }
 
       return result;
     }

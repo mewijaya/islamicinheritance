@@ -484,7 +484,7 @@ var Waris = function () {
 
           if (_key4 === 'siblingSameMother') {
             this.portion['sisterSameMother'] = {
-              portion: divident * this.ahliWaris['sisterSameMother'] + '/' + this.divident * (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']),
+              portion: this.ashabulFurud['sisterSameMother'] + ' diaulkan menjadi ' + divident * this.ahliWaris['sisterSameMother'] + '/' + this.divident * (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']),
               from: 'ashabul furudh',
               value: _value / (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) * this.ahliWaris['sisterSameMother'],
               person: this.ahliWaris['sisterSameMother'],
@@ -492,7 +492,7 @@ var Waris = function () {
             };
 
             this.portion['brotherSameMother'] = {
-              portion: divident * this.ahliWaris['brotherSameMother'] + '/' + this.divident * (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']),
+              portion: this.ashabulFurud['brotherSameMother'] + ' diaulkan menjadi ' + divident * this.ahliWaris['brotherSameMother'] + '/' + this.divident * (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']),
               from: 'ashabul furudh',
               value: _value / (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) * this.ahliWaris['brotherSameMother'],
               person: this.ahliWaris['brotherSameMother'],
@@ -500,7 +500,7 @@ var Waris = function () {
             };
           } else {
             this.portion[_key4] = {
-              portion: divident + '/' + this.divident,
+              portion: this.ashabulFurud[_key4] + ' diaulkan menjadi ' + divident + '/' + this.divident,
               from: 'ashabul furudh',
               value: _value,
               person: this.ahliWaris[_key4],
@@ -567,7 +567,7 @@ var Waris = function () {
             var gcdBrother = (0, _util.findGCD)(this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother'], this.ahliWaris['brotherSameMother']);
 
             this.portion['sisterSameMother'] = {
-              portion: _divident * this.ahliWaris['sisterSameMother'] / gcdSister + '/' + calculate.divident * ((this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) / gcdSister) + (this.has('wife') ? ' sisa' : ''),
+              portion: this.ashabulFurud['sisterSameMother'] + ' diraddkan menjadi ' + _divident * this.ahliWaris['sisterSameMother'] / gcdSister + '/' + calculate.divident * ((this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) / gcdSister) + (this.has('wife') ? ' sisa' : ''),
               from: 'ashabul furudh',
               value: _value4 / (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) * this.ahliWaris['sisterSameMother'],
               person: this.ahliWaris['sisterSameMother'],
@@ -575,7 +575,7 @@ var Waris = function () {
             };
 
             this.portion['brotherSameMother'] = {
-              portion: _divident * this.ahliWaris['brotherSameMother'] / gcdBrother + '/' + calculate.divident * ((this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) / gcdBrother) + (this.has('wife') ? ' sisa' : ''),
+              portion: this.ashabulFurud['brotherSameMother'] + ' diraddkan menjadi ' + _divident * this.ahliWaris['brotherSameMother'] / gcdBrother + '/' + calculate.divident * ((this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) / gcdBrother) + (this.has('wife') ? ' sisa' : ''),
               from: 'ashabul furudh',
               value: _value4 / (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) * this.ahliWaris['brotherSameMother'],
               person: this.ahliWaris['brotherSameMother'],
@@ -583,7 +583,7 @@ var Waris = function () {
             };
           } else {
             this.portion[_key5] = {
-              portion: _divident + '/' + calculate.divident + (this.has('wife') ? ' sisa' : ''),
+              portion: this.ashabulFurud[_key5] + ' diraddkan menjadi ' + _divident + '/' + calculate.divident + (this.has('wife') ? ' sisa' : ''),
               from: 'ashabul furudh',
               value: _value4,
               person: this.ahliWaris[_key5],
@@ -593,13 +593,22 @@ var Waris = function () {
         }
 
         if (endingBalance > 0) {
-          this.portion['baitulmaal'] = {
-            portion: '-',
-            from: 'sisa',
-            value: endingBalance,
-            person: 0,
-            valuePerPerson: 0
-          };
+          if (Object.keys(this.ahliWaris).length === 1) {
+            var _key6 = Object.keys(this.ahliWaris)[0];
+            this.portion[_key6].from += ' + sisa';
+            this.portion[_key6].value += ' + ' + endingBalance;
+            this.portion[_key6].valuePerPerson += ' + ' + endingBalance / this.ahliWaris[_key6];
+            this.portion[_key6].note = 'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada baitulmaal';
+          } else {
+            this.portion['baitulmaal'] = {
+              portion: '-',
+              from: 'sisa',
+              value: endingBalance,
+              person: 0,
+              valuePerPerson: 0,
+              note: 'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada kerabat'
+            };
+          }
         }
       }
     }
@@ -624,6 +633,10 @@ var Waris = function () {
           calculation: this.calculation,
           asalmasalah: this.asalmasalah > 0 ? this.asalmasalah : 0
         };
+
+        if (this.has('fatherOfFather') && (this.has('brother') || this.has('brotherSameFather') || this.has('sister') || this.has('sisterSameFather'))) {
+          this.portion['fatherOfFather']['note'] = 'ada pendapat lain yang menyatakan bahwa saudara mendapat bagian';
+        }
 
         return result;
       }
