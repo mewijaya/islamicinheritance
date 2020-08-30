@@ -45,6 +45,12 @@ var Waris = function () {
   }, {
     key: 'validateAhliWaris',
     value: function validateAhliWaris() {
+      var _this = this;
+
+      Object.keys(this.ahliWaris).forEach(function (key) {
+        if (_this.ahliWaris[key] === 0) delete _this.ahliWaris[key];
+      });
+
       if (this.has('husband') && this.has('wife')) {
         this.errorMessage['ahliWaris'] = 'ahli waris musn\'t include both husband and wife';
       }

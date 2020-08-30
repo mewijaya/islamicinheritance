@@ -64,6 +64,10 @@ class Waris {
   }
 
   validateAhliWaris() {
+    Object.keys(this.ahliWaris).forEach((key) => {
+      if (this.ahliWaris[key] === 0) delete this.ahliWaris[key];
+    });
+
     if (this.has('husband') && this.has('wife')) {
       this.errorMessage[
         'ahliWaris'
@@ -821,7 +825,7 @@ class Waris {
             person: 0,
             valuePerPerson: 0,
             note:
-              'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada kerabat'
+              'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada ahli waris'
           };
         }
       }
