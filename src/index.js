@@ -811,6 +811,7 @@ class Waris {
       if (endingBalance > 0) {
         if (Object.keys(this.ahliWaris).length === 1) {
           let key = Object.keys(this.ahliWaris)[0];
+          this.portion[key].portion += ' + sisa';
           this.portion[key].from += ' + sisa';
           this.portion[key].value += ' + ' + endingBalance;
           this.portion[key].valuePerPerson +=
@@ -819,7 +820,7 @@ class Waris {
             'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada baitulmaal';
         } else {
           this.portion['baitulmaal'] = {
-            portion: '-',
+            portion: 'sisa',
             from: 'sisa',
             value: endingBalance,
             person: 0,
