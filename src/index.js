@@ -53,9 +53,12 @@ class Waris {
       ('totalAsset' in this.asset ? this.asset['totalDebt'] : 0) -
       ('costOfFuneral' in this.asset ? this.asset['costOfFuneral'] : 0);
 
-    if ('will' in this.asset && this.asset['will'] > this.balance / 3) {
-      this.errorMessage['will'] =
-        'will  must not more than 1/3 (asset - (debt and funeral))';
+    if ('will' in this.asset) {
+      if (this.asset['will'] > this.balance / 3) {
+        this.errorMessage['will'] = 'will  must not more than 1/3 (asset - (debt and funeral))';
+      } else {
+        this.balance = this.balance - this.asset['will'];
+      }
     }
 
     if (this.balance <= 0) {
