@@ -601,18 +601,19 @@ var Waris = function () {
         if (endingBalance > 0) {
           if (Object.keys(this.ahliWaris).length === 1) {
             var _key6 = Object.keys(this.ahliWaris)[0];
+            this.portion[_key6].portion += ' + sisa';
             this.portion[_key6].from += ' + sisa';
             this.portion[_key6].value += ' + ' + endingBalance;
             this.portion[_key6].valuePerPerson += ' + ' + endingBalance / this.ahliWaris[_key6];
             this.portion[_key6].note = 'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada baitulmaal';
           } else {
             this.portion['baitulmaal'] = {
-              portion: '-',
+              portion: 'sisa',
               from: 'sisa',
               value: endingBalance,
               person: 0,
               valuePerPerson: 0,
-              note: 'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada kerabat'
+              note: 'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada ahli waris'
             };
           }
         }
