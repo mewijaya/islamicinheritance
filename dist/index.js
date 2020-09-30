@@ -34,8 +34,12 @@ var Waris = function () {
 
       this.balance = this.asset['totalAsset'] - ('totalAsset' in this.asset ? this.asset['totalDebt'] : 0) - ('costOfFuneral' in this.asset ? this.asset['costOfFuneral'] : 0);
 
-      if ('will' in this.asset && this.asset['will'] > this.balance / 3) {
-        this.errorMessage['will'] = 'will  must not more than 1/3 (asset - (debt and funeral))';
+      if ('will' in this.asset) {
+        if (this.asset['will'] > this.balance / 3) {
+          this.errorMessage['will'] = 'will must not more than 1/3 (asset - (debt and funeral))';
+        } else {
+          this.balance = this.balance - this.asset['will'];
+        }
       }
 
       if (this.balance <= 0) {
@@ -599,11 +603,19 @@ var Waris = function () {
         }
 
         if (endingBalance > 0) {
-          if (Object.keys(this.ahliWaris).length === 1) {
-            var _key6 = Object.keys(this.ahliWaris)[0];
+          let _ahliWaris = [];
+          for (var key in this.ahliWaris) {
+            if (this.ahliWaris[key] >= 1) {
+              _ahliWaris[key] = this.ahliWaris[key];
+            }
+          }
+          
+          if (Object.keys(_ahliWaris).length === 1) {
+            var _key6 = Object.keys(_ahliWaris)[0];
+            this.portion[_key6].portion += ' + sisa';
             this.portion[_key6].from += ' + sisa';
             this.portion[_key6].value += ' + ' + endingBalance;
-            this.portion[_key6].valuePerPerson += ' + ' + endingBalance / this.ahliWaris[_key6];
+            this.portion[_key6].valuePerPerson += ' + ' + endingBalance / _ahliWaris[_key6];
             this.portion[_key6].note = 'ada pendapat lain yang menyatakan bahwa sisa diberikan kepada baitulmaal';
           } else {
             this.portion['baitulmaal'] = {
