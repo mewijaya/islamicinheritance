@@ -1,12 +1,16 @@
-'use strict';
+"use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _util = require("./util.js");
 
-var _util = require('./util.js');
+require("@babel/polyfill");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Waris = function () {
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Waris = /*#__PURE__*/function () {
   function Waris(asset, ahliWaris) {
     _classCallCheck(this, Waris);
 
@@ -26,16 +30,20 @@ var Waris = function () {
   }
 
   _createClass(Waris, [{
-    key: 'validateAsset',
+    key: "validateAsset",
     value: function validateAsset() {
       if (!('totalAsset' in this.asset) || this.asset['totalAsset'] < 0) {
         this.errorMessage['totalAsset'] = 'total asset required and must not less than equal zero';
       }
 
-      this.balance = this.asset['totalAsset'] - ('totalAsset' in this.asset ? this.asset['totalDebt'] : 0) - ('costOfFuneral' in this.asset ? this.asset['costOfFuneral'] : 0);
+      this.balance = this.asset['totalAsset'] - ('totalDebt' in this.asset ? this.asset['totalDebt'] : 0) - ('costOfFuneral' in this.asset ? this.asset['costOfFuneral'] : 0);
 
-      if ('will' in this.asset && this.asset['will'] > this.balance / 3) {
-        this.errorMessage['will'] = 'will  must not more than 1/3 (asset - (debt and funeral))';
+      if ('will' in this.asset) {
+        if (this.asset['will'] > this.balance / 3) {
+          this.errorMessage['will'] = 'will  must not more than 1/3 (asset - (debt and funeral))';
+        } else {
+          this.balance = this.balance - this.asset['will'];
+        }
       }
 
       if (this.balance <= 0) {
@@ -43,7 +51,7 @@ var Waris = function () {
       }
     }
   }, {
-    key: 'validateAhliWaris',
+    key: "validateAhliWaris",
     value: function validateAhliWaris() {
       var _this = this;
 
@@ -52,7 +60,7 @@ var Waris = function () {
       });
 
       if (this.has('husband') && this.has('wife')) {
-        this.errorMessage['ahliWaris'] = 'ahli waris musn\'t include both husband and wife';
+        this.errorMessage['ahliWaris'] = "ahli waris musn't include both husband and wife";
       }
 
       this.maxNum('wife', 4);
@@ -64,42 +72,40 @@ var Waris = function () {
       this.maxNum('motherOfFather', 1);
     }
   }, {
-    key: 'maxNum',
+    key: "maxNum",
     value: function maxNum(key, max) {
       if (this.has(key) && this.ahliWaris[key] > max) {
-        this.errorMessage[key] = key + ' musn\'t more than ' + max;
+        this.errorMessage[key] = "".concat(key, " musn't more than ").concat(max);
       }
     }
   }, {
-    key: 'hasPosterity',
+    key: "hasPosterity",
     value: function hasPosterity() {
       if (!this.has('son') && !this.has('daughter') && !this.has('sonOfSon') && !this.has('daughterOfSon')) return false;
       return true;
     }
   }, {
-    key: 'hasAncestry',
+    key: "hasAncestry",
     value: function hasAncestry() {
       if (!this.has('father') && !this.has('fatherOfFather')) return false;
       return true;
     }
   }, {
-    key: 'has',
+    key: "has",
     value: function has(key) {
       return key in this.ahliWaris && this.ahliWaris[key] >= 1;
     }
   }, {
-    key: 'isUmariyatani',
+    key: "isUmariyatani",
     value: function isUmariyatani() {
       if (this.has('mother') && this.hasAncestry() && (this.has('husband') || this.has('wife')) && !this.hasPosterity() && !this.has('brother') && !this.has('brotherSameFather') && !this.has('brotherSameMother') && !this.has('sonOfBrother') && !this.has('sonOfBrotherSameFather') && !this.has('sonOfBrotherSameMother') && !this.has('uncleFromFather') && !this.has('uncleFromSameFather') && !this.has('sonOfUncleFromFather') && !this.has('sonOfUncleFromSameFather') && !this.has('motherOfFather') && !this.has('motherOfMother') && !this.has('sisterSameFather') && !this.has('sisterSameMother')) return true;
       return false;
     }
   }, {
-    key: 'calculateAshabulFurudh',
+    key: "calculateAshabulFurudh",
     value: function calculateAshabulFurudh() {
       if (this.has('father')) if (this.hasPosterity()) this.ashabulFurud['father'] = '1/6';
-
       if (this.has('fatherOfFather')) if (!this.has('father') && !this.hasPosterity()) this.ashabulFurud['fatherOfFather'] = '1/6';
-
       if (this.has('husband')) if (!this.hasPosterity()) this.ashabulFurud['husband'] = '1/2';else this.ashabulFurud['husband'] = '1/4';
 
       if (this.has('daughter')) {
@@ -111,7 +117,6 @@ var Waris = function () {
         if (!this.has('sonOfSon') && !this.has('son')) {
           if (!this.has('daughter')) {
             if (this.ahliWaris.daughterOfSon == 1) this.ashabulFurud['daughterOfSon'] = '1/2';
-
             if (this.ahliWaris.daughterOfSon >= 2) this.ashabulFurud['daughterOfSon'] = '2/3';
           } else if (this.has('daughter') && this.ahliWaris.daughter == 1) {
             if (this.ahliWaris.daughterOfSon >= 1) this.ashabulFurud['daughterOfSon'] = '1/6';
@@ -122,12 +127,12 @@ var Waris = function () {
       if (this.has('mother')) {
         var numberOfSiblings = 0;
         var siblings = ['brother', 'broterSameFather', 'brotherSameMother', 'sister', 'sisterSameFather', 'sisterSameMother'];
+
         for (var index in siblings) {
           if (this.has(siblings[index])) numberOfSiblings += this.ahliWaris[siblings[index]];
         }
 
         if (!this.hasPosterity() && numberOfSiblings < 2 && !this.isUmariyatani()) this.ashabulFurud['mother'] = '1/3';
-
         if (this.hasPosterity() || numberOfSiblings >= 2) this.ashabulFurud['mother'] = '1/6';
       }
 
@@ -189,17 +194,19 @@ var Waris = function () {
       return this.ashabulFurud;
     }
   }, {
-    key: 'chooseAsobah',
+    key: "chooseAsobah",
     value: function chooseAsobah() {
       if (this.has('son')) {
         if (this.has('daughter')) {
-          this.ashobah['daughter'] = 'bil ghoir';
+          this.ashobah['daughter'] = "bil ghoir";
         }
+
         this.ashobah['son'] = 'bin nafs';
       } else if (this.has('sonOfSon')) {
         if (this.has('daughterOfSon')) {
-          this.ashobah['daughterOfSon'] = 'bil ghoir';
+          this.ashobah['daughterOfSon'] = "bil ghoir";
         }
+
         this.ashobah['sonOfSon'] = 'bin nafs';
       } else if (this.has('father')) {
         this.ashobah['father'] = 'bin nafs';
@@ -207,20 +214,22 @@ var Waris = function () {
         this.ashobah['fatherOfFather'] = 'bin nafs';
       } else if (this.has('brother')) {
         if (this.has('sister')) {
-          this.ashobah['sister'] = 'bil ghoir';
+          this.ashobah['sister'] = "bil ghoir";
         }
+
         this.ashobah['brother'] = 'bin nafs';
       } else if (this.has('brotherSameFather')) {
         if (this.has('sisterSameFather')) {
           this.ashobah['sisterSameFather'] = 'bin nafs';
         }
+
         this.ashobah['brotherSameFather'] = 'bin nafs';
       } else if (this.has('sonOfBrother')) {
         this.ashobah['sonOfBrother'] = 'bin nafs';
       } else if (this.has('sister') && this.has('daughter')) {
-        this.ashobah['sister'] = 'ma\'al ghoir';
+        this.ashobah['sister'] = "ma'al ghoir";
       } else if (this.has('sister') && this.has('daughterOfSon')) {
-        this.ashobah['sister'] = 'ma\'al ghoir';
+        this.ashobah['sister'] = "ma'al ghoir";
       } else if (this.has('sonOfBrotherSameFather')) {
         this.ashobah['sonOfBrotherSameFather'] = 'bin nafs';
       } else if (this.has('uncleFromFather')) {
@@ -232,10 +241,11 @@ var Waris = function () {
       } else if (this.has('sonOfUncleFromSameFather')) {
         this.ashobah['sonOfUncleFromSameFather'] = 'bin nafs';
       }
+
       return this.ashobah;
     }
   }, {
-    key: 'calculateAsalMasalah',
+    key: "calculateAsalMasalah",
     value: function calculateAsalMasalah(ashabulFurud) {
       var masalah = [];
       var divident = 0;
@@ -279,6 +289,7 @@ var Waris = function () {
       }
 
       var calculation = '';
+
       if (this.isUmariyatani()) {
         calculation = 'umariyatani';
       } else if (divident < asalmasalah && Object.keys(this.ashobah).length === 0) {
@@ -296,9 +307,10 @@ var Waris = function () {
       };
     }
   }, {
-    key: 'calculatePortion',
+    key: "calculatePortion",
     value: function calculatePortion() {
       var currentBalance = this.balance;
+
       if (this.isUmariyatani()) {
         if (this.has('wife')) {
           this.portion['wife'] = {
@@ -308,9 +320,7 @@ var Waris = function () {
             person: this.ahliWaris['wife'],
             valuePerPerson: currentBalance / 4 / this.ahliWaris['wife']
           };
-
           currentBalance -= this.portion['wife'].value;
-
           this.portion['mother'] = {
             portion: '1/3 sisa',
             from: 'ashabul furudh',
@@ -318,9 +328,7 @@ var Waris = function () {
             person: this.ahliWaris['mother'],
             valuePerPerson: currentBalance / 3
           };
-
           currentBalance -= this.portion['mother'].value;
-
           this.portion['father'] = {
             portion: '2/3 sisa',
             from: 'ashobah',
@@ -337,7 +345,6 @@ var Waris = function () {
             valuePerPerson: currentBalance / 2
           };
           currentBalance -= this.portion['husband'].value;
-
           this.portion['mother'] = {
             portion: '1/3 sisa',
             from: 'ashabul furudh',
@@ -345,9 +352,7 @@ var Waris = function () {
             person: this.ahliWaris['mother'],
             valuePerPerson: currentBalance / 3
           };
-
           currentBalance -= this.portion['mother'].value;
-
           this.portion['father'] = {
             portion: '2/3 sisa',
             from: 'ashabul furudh',
@@ -359,6 +364,7 @@ var Waris = function () {
       } else if (this.calculation == '-') {
         for (var key in this.ashabulFurud) {
           var value = 0;
+
           if (this.ashabulFurud[key] === '1/2') {
             value = 1 / 2 * this.balance;
           } else if (this.ashabulFurud[key] === '1/4') {
@@ -383,7 +389,6 @@ var Waris = function () {
               person: this.ahliWaris['sisterSameMother'],
               valuePerPerson: value / (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother'])
             };
-
             this.portion['brotherSameMother'] = {
               portion: this.ashabulFurud[key],
               from: 'ashabul furudh',
@@ -421,10 +426,12 @@ var Waris = function () {
           }
         } else if (Object.keys(this.ashobah).length > 1) {
           var ashobahDivident = 0;
+
           for (var _key2 in this.ashobah) {
             if (this.male.indexOf(_key2) >= 0) {
               ashobahDivident += 2 * this.ahliWaris[_key2];
             }
+
             if (this.female.indexOf(_key2) >= 0) {
               ashobahDivident += this.ahliWaris[_key2];
             }
@@ -470,6 +477,7 @@ var Waris = function () {
         for (var _key4 in this.ashabulFurud) {
           var _value = 0;
           var divident = 0;
+
           if (this.ashabulFurud[_key4] === '1/2') {
             divident = 1 / 2 * this.asalmasalah;
           } else if (this.ashabulFurud[_key4] === '1/4') {
@@ -496,7 +504,6 @@ var Waris = function () {
               person: this.ahliWaris['sisterSameMother'],
               valuePerPerson: _value / (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother'])
             };
-
             this.portion['brotherSameMother'] = {
               portion: this.ashabulFurud['brotherSameMother'] + ' diaulkan menjadi ' + divident * this.ahliWaris['brotherSameMother'] + '/' + this.divident * (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']),
               from: 'ashabul furudh',
@@ -516,6 +523,7 @@ var Waris = function () {
         }
       } else if (this.calculation == 'radd') {
         var restAshabulFurudh = JSON.parse(JSON.stringify(this.ashabulFurud));
+
         if (this.has('husband')) {
           var _value2 = this.ashabulFurud['husband'] === '1/2' ? 1 / 2 * this.balance : 1 / 4 * this.balance;
 
@@ -546,9 +554,11 @@ var Waris = function () {
 
         var calculate = this.calculateAsalMasalah(restAshabulFurudh);
         var endingBalance = currentBalance;
+
         for (var _key5 in restAshabulFurudh) {
           var _value4 = 0;
           var _divident = 0;
+
           if (restAshabulFurudh[_key5] === '1/2') {
             _divident = 1 / 2 * calculate.asalmasalah;
           } else if (restAshabulFurudh[_key5] === '1/4') {
@@ -567,11 +577,10 @@ var Waris = function () {
 
           _value4 = _divident / calculate.divident * currentBalance;
           endingBalance -= _value4;
+
           if (_key5 === 'siblingSameMother') {
             var gcdSister = (0, _util.findGCD)(this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother'], this.ahliWaris['sisterSameMother']);
-
             var gcdBrother = (0, _util.findGCD)(this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother'], this.ahliWaris['brotherSameMother']);
-
             this.portion['sisterSameMother'] = {
               portion: this.ashabulFurud['sisterSameMother'] + ' diraddkan menjadi ' + _divident * this.ahliWaris['sisterSameMother'] / gcdSister + '/' + calculate.divident * ((this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) / gcdSister) + (this.has('wife') ? ' sisa' : ''),
               from: 'ashabul furudh',
@@ -579,7 +588,6 @@ var Waris = function () {
               person: this.ahliWaris['sisterSameMother'],
               valuePerPerson: _value4 / (this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother'])
             };
-
             this.portion['brotherSameMother'] = {
               portion: this.ashabulFurud['brotherSameMother'] + ' diraddkan menjadi ' + _divident * this.ahliWaris['brotherSameMother'] / gcdBrother + '/' + calculate.divident * ((this.ahliWaris['sisterSameMother'] + this.ahliWaris['brotherSameMother']) / gcdBrother) + (this.has('wife') ? ' sisa' : ''),
               from: 'ashabul furudh',
@@ -620,7 +628,7 @@ var Waris = function () {
       }
     }
   }, {
-    key: 'calculateWaris',
+    key: "calculateWaris",
     value: function calculateWaris() {
       this.validateAsset();
       this.validateAhliWaris();
@@ -631,7 +639,6 @@ var Waris = function () {
       this.calculation = calculate.calculation;
       this.divident = calculate.divident;
       this.calculatePortion();
-
       if (Object.keys(this.errorMessage).length > 0) return this.errorMessage;else {
         var result = {
           asset: this.asset,
@@ -642,7 +649,7 @@ var Waris = function () {
         };
 
         if (this.has('fatherOfFather') && (this.has('brother') || this.has('brotherSameFather') || this.has('sister') || this.has('sisterSameFather'))) {
-          this.portion['fatherOfFather']['note'] = 'ada pendapat lain yang menyatakan bahwa saudara mendapat bagian';
+          this.portion['fatherOfFather']['note'] = 'ada pendapat lain yang menyatakan bahwa saudara mendapat bagian. Untuk lebih detail, silahkan konsultasi dengan ustadz di sekitar anda.';
         }
 
         return result;
